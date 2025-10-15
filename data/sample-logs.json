@@ -1,0 +1,162 @@
+[
+  {
+    "timestamp": "2025-10-15T08:15:23Z",
+    "event_type": "login",
+    "username": "admin",
+    "source_ip": "192.168.1.100",
+    "status": "success",
+    "message": "User logged in successfully"
+  },
+  {
+    "timestamp": "2025-10-15T08:16:01Z",
+    "event_type": "login",
+    "username": "jdoe",
+    "source_ip": "10.0.1.50",
+    "status": "failed",
+    "message": "Invalid password"
+  },
+  {
+    "timestamp": "2025-10-15T08:16:15Z",
+    "event_type": "login",
+    "username": "jdoe",
+    "source_ip": "10.0.1.50",
+    "status": "failed",
+    "message": "Invalid password"
+  },
+  {
+    "timestamp": "2025-10-15T08:16:32Z",
+    "event_type": "login",
+    "username": "jdoe",
+    "source_ip": "10.0.1.50",
+    "status": "failed",
+    "message": "Invalid password"
+  },
+  {
+    "timestamp": "2025-10-15T08:16:45Z",
+    "event_type": "login",
+    "username": "jdoe",
+    "source_ip": "10.0.1.50",
+    "status": "failed",
+    "message": "Invalid password"
+  },
+  {
+    "timestamp": "2025-10-15T08:17:02Z",
+    "event_type": "login",
+    "username": "jdoe",
+    "source_ip": "10.0.1.50",
+    "status": "failed",
+    "message": "Invalid password"
+  },
+  {
+    "timestamp": "2025-10-15T08:17:18Z",
+    "event_type": "login",
+    "username": "jdoe",
+    "source_ip": "10.0.1.50",
+    "status": "failed",
+    "message": "Account locked due to multiple failed attempts"
+  },
+  {
+    "timestamp": "2025-10-15T02:34:12Z",
+    "event_type": "login",
+    "username": "alice",
+    "source_ip": "203.0.113.45",
+    "status": "success",
+    "message": "User logged in successfully"
+  },
+  {
+    "timestamp": "2025-10-15T03:15:44Z",
+    "event_type": "file_access",
+    "username": "bob",
+    "source_ip": "198.51.100.22",
+    "status": "success",
+    "message": "Accessed sensitive file: /etc/passwd"
+  },
+  {
+    "timestamp": "2025-10-15T14:22:33Z",
+    "event_type": "login",
+    "username": "root",
+    "source_ip": "185.220.101.5",
+    "status": "failed",
+    "message": "Invalid credentials"
+  },
+  {
+    "timestamp": "2025-10-15T14:22:45Z",
+    "event_type": "login",
+    "username": "root",
+    "source_ip": "185.220.101.5",
+    "status": "failed",
+    "message": "Invalid credentials"
+  },
+  {
+    "timestamp": "2025-10-15T14:23:01Z",
+    "event_type": "login",
+    "username": "root",
+    "source_ip": "185.220.101.5",
+    "status": "failed",
+    "message": "Invalid credentials"
+  },
+  {
+    "timestamp": "2025-10-15T14:23:12Z",
+    "event_type": "login",
+    "username": "root",
+    "source_ip": "185.220.101.5",
+    "status": "failed",
+    "message": "Invalid credentials"
+  },
+  {
+    "timestamp": "2025-10-15T14:23:28Z",
+    "event_type": "login",
+    "username": "root",
+    "source_ip": "185.220.101.5",
+    "status": "failed",
+    "message": "Invalid credentials"
+  },
+  {
+    "timestamp": "2025-10-15T14:23:42Z",
+    "event_type": "login",
+    "username": "admin",
+    "source_ip": "185.220.101.5",
+    "status": "failed",
+    "message": "Invalid credentials"
+  },
+  {
+    "timestamp": "2025-10-15T14:23:55Z",
+    "event_type": "login",
+    "username": "administrator",
+    "source_ip": "185.220.101.5",
+    "status": "failed",
+    "message": "Invalid credentials"
+  },
+  {
+    "timestamp": "2025-10-15T09:45:22Z",
+    "event_type": "login",
+    "username": "charlie",
+    "source_ip": "172.16.0.5",
+    "status": "success",
+    "message": "User logged in successfully"
+  },
+  {
+    "timestamp": "2025-10-15T11:30:11Z",
+    "event_type": "logout",
+    "username": "charlie",
+    "source_ip": "172.16.0.5",
+    "status": "success",
+    "message": "User logged out"
+  },
+  {
+    "timestamp": "2025-10-15T23:45:33Z",
+    "event_type": "login",
+    "username": "david",
+    "source_ip": "192.168.1.105",
+    "status": "success",
+    "message": "Late night login detected"
+  },
+  {
+    "timestamp": "2025-10-15T01:12:44Z",
+    "event_type": "database_query",
+    "username": "eve",
+    "source_ip": "10.0.0.88",
+    "status": "success",
+    "message": "SELECT * FROM users executed at unusual hour"
+  }
+]

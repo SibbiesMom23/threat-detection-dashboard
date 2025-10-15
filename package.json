@@ -1,0 +1,26 @@
+{
+  "name": "threat-detection-dashboard",
+  "version": "1.0.0",
+  "description": "AI-Assisted Threat Detection Dashboard - rule-based security log analysis with AI summarization",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["security", "threat-detection", "ai", "cybersecurity"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "better-sqlite3": "^12.4.1",
+    "cors": "^2.8.5",
+    "csv-parse": "^6.1.0",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "multer": "^2.0.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}

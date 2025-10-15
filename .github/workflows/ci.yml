@@ -25,11 +25,8 @@ jobs:
       - name: Install backend dependencies
         run: npm ci
 
-      - name: Check backend code quality
-        run: |
-          echo "Running backend checks..."
-          node --version
-          npm --version
+      - name: Run detection rule tests
+        run: npm test
 
       - name: Test backend startup
         run: |

@@ -17,11 +17,29 @@ A defensive security tool for analyzing security logs and detecting threats usin
 
 ### Prerequisites
 
+**For Docker:**
+- Docker Desktop or Docker Engine + Docker Compose
+- (Optional) Anthropic API key for AI summaries
+
+**For Local Development:**
 - Node.js 18+ and npm
 - (Optional) Anthropic API key for AI summaries
 
 ### Installation
 
+**For Docker:**
+```bash
+# Copy environment template (optional)
+cp .env.example .env
+
+# Add your Anthropic API key to .env if you have one
+# ANTHROPIC_API_KEY=your_key_here
+
+# Start with Docker Compose
+docker-compose up -d
+```
+
+**For Local Development:**
 ```bash
 # Install dependencies
 npm install
@@ -38,13 +56,26 @@ cp .env.example .env
 
 ### Running the Full Stack
 
-**Option 1: Start everything at once (recommended)**
+**Option 1: Docker (recommended for production)**
+```bash
+# Start with Docker Compose
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop
+docker-compose down
+```
+This starts both the backend API (port 3000) and React dashboard (port 5173) in containers.
+
+**Option 2: Local development with script**
 ```bash
 ./start-all.sh
 ```
-This starts both the backend API (port 3000) and React dashboard (port 5173).
+This starts both components locally for development with hot-reload.
 
-**Option 2: Start components separately**
+**Option 3: Start components separately**
 
 Terminal 1 - Backend API:
 ```bash
@@ -59,7 +90,7 @@ cd dashboard && npm run dev
 ### Access Points
 
 - **Backend API**: http://localhost:3000
-- **SOC Dashboard**: http://localhost:5173
+- **SOC Dashboard**: http://localhost:5173 (local) or http://localhost:80 (Docker)
 - **API Documentation**: http://localhost:3000/
 
 ## API Endpoints

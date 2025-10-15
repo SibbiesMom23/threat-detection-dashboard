@@ -1,0 +1,36 @@
+# Node modules
+node_modules/
+npm-debug.log*
+
+# Environment
+.env
+
+# Git
+.git/
+.gitignore
+
+# Database files
+*.db
+*.db-journal
+
+# Uploads (will be mounted as volume)
+data/uploads/*
+
+# Dashboard (separate container)
+dashboard/
+
+# Documentation
+README.md
+CLAUDE.md
+
+# Scripts
+start-all.sh
+test-api.sh
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

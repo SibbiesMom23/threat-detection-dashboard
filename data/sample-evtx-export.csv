@@ -1,0 +1,24 @@
+TimeCreated,EventID,Computer,TargetUserName,IpAddress,LogonType,Status,Message
+2025-10-15T08:15:22.000Z,4624,WORKSTATION-01,jsmith,10.50.1.45,10,success,An account was successfully logged on
+2025-10-15T08:16:10.000Z,4625,WORKSTATION-01,admin,192.168.100.50,3,failed,An account failed to log on - Bad password
+2025-10-15T08:16:35.000Z,4625,WORKSTATION-01,admin,192.168.100.50,3,failed,An account failed to log on - Bad password
+2025-10-15T08:17:02.000Z,4625,WORKSTATION-01,admin,192.168.100.50,3,failed,An account failed to log on - Bad password
+2025-10-15T08:17:28.000Z,4625,WORKSTATION-01,admin,192.168.100.50,3,failed,An account failed to log on - Bad password
+2025-10-15T08:17:55.000Z,4625,WORKSTATION-01,admin,192.168.100.50,3,failed,An account failed to log on - Bad password
+2025-10-15T08:18:20.000Z,4625,WORKSTATION-01,admin,192.168.100.50,3,failed,An account failed to log on - Bad password
+2025-10-15T08:18:45.000Z,4624,WORKSTATION-01,admin,192.168.100.50,10,success,An account was successfully logged on - Brute force succeeded
+2025-10-15T02:30:15.000Z,4624,SERVER-DC-01,sysadmin,172.20.30.100,10,success,An account was successfully logged on - Off hours access
+2025-10-15T03:45:30.000Z,4624,SERVER-APP-02,dbadmin,10.10.10.200,3,success,An account was successfully logged on - Late night activity
+2025-10-15T09:00:00.000Z,4624,WORKSTATION-05,mjohnson,10.50.1.88,2,success,An account was successfully logged on
+2025-10-15T09:15:20.000Z,4624,WORKSTATION-12,klee,10.50.1.92,2,success,An account was successfully logged on
+2025-10-15T23:55:00.000Z,4624,SERVER-WEB-01,webadmin,172.16.50.10,10,success,An account was successfully logged on - Very late access
+2025-10-19T11:30:00.000Z,4624,WORKSTATION-01,contractor,10.50.2.15,2,success,An account was successfully logged on - Weekend login
+2025-10-15T14:20:10.000Z,4625,SERVER-DC-01,administrator,203.0.113.100,3,failed,An account failed to log on - External IP
+2025-10-15T14:20:35.000Z,4625,SERVER-DC-01,administrator,203.0.113.100,3,failed,An account failed to log on - External IP
+2025-10-15T14:21:00.000Z,4625,SERVER-DC-01,administrator,203.0.113.100,3,failed,An account failed to log on - External IP
+2025-10-15T14:21:25.000Z,4625,SERVER-DC-01,administrator,203.0.113.100,3,failed,An account failed to log on - External IP
+2025-10-15T14:21:50.000Z,4625,SERVER-DC-01,administrator,203.0.113.100,3,failed,An account failed to log on - External IP
+2025-10-15T14:22:15.000Z,4625,SERVER-DC-01,administrator,203.0.113.100,3,failed,An account failed to log on - External IP
+2025-10-15T10:30:00.000Z,4624,WORKSTATION-08,jdoe,10.50.1.75,2,success,An account was successfully logged on
+2025-10-15T13:45:30.000Z,4634,WORKSTATION-08,jdoe,10.50.1.75,2,success,An account was logged off
+2025-10-15T15:00:00.000Z,4672,SERVER-DC-01,administrator,10.10.10.5,10,success,Special privileges assigned to new logon - Admin rights

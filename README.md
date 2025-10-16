@@ -108,6 +108,7 @@ GET /api/stats           # Dashboard statistics
 ```bash
 POST /api/logs/upload    # Upload log file (multipart/form-data)
 POST /api/logs/batch     # Ingest logs via JSON body
+POST /api/ingest-csv     # Ingest CSV directly (raw text or "csv" field)
 GET  /api/logs           # List recent logs (?limit=100)
 ```
 
@@ -123,9 +124,35 @@ POST /api/analyze        # Generate AI summary of recent alerts
 
 ### Upload Sample Logs
 
+**Via File Upload:**
 ```bash
 curl -X POST http://localhost:3000/api/logs/upload \
   -F "logfile=@data/sample-logs.json"
+```
+
+**Via CSV Ingestion (raw text):**
+```bash
+curl -X POST http://localhost:3000/api/ingest-csv \
+  -H "Content-Type: application/json" \
+  -d @data/sample-failed-logins.csv
+```
+
+**Via CSV Ingestion (JSON wrapper):**
+```bash
+curl -X POST http://localhost:3000/api/ingest-csv \
+  -H "Content-Type: application/json" \
+  -d "{\"csv\":\"$(cat data/sample-failed-logins.csv | sed 's/"/\\"/g')\"}"
+```
+
+**EVTX Export Support:**
+```bash
+# First export Windows Event Log to CSV using evtx_dump
+evtx_dump -o csv Security.evtx > security-logs.csv
+
+# Then ingest the CSV
+curl -X POST http://localhost:3000/api/ingest-csv \
+  -H "Content-Type: application/json" \
+  -d @security-logs.csv
 ```
 
 ### Get Alerts
@@ -218,9 +245,11 @@ threat-detection-dashboard/
 │   │       └── StatsCards.jsx     # Dashboard statistics
 │   └── package.json
 ├── data/
-│   ├── sample-logs.json      # Example log data
-│   ├── uploads/              # Uploaded files
-│   └── threats.db            # SQLite database (auto-created)
+│   ├── sample-logs.json           # Example log data (JSON)
+│   ├── sample-failed-logins.csv   # Sample CSV with brute force attempts
+│   ├── sample-evtx-export.csv     # Sample Windows Event Log export
+│   ├── uploads/                   # Uploaded files
+│   └── threats.db                 # SQLite database (auto-created)
 ├── start-all.sh              # Start backend + dashboard
 ├── test-api.sh               # API test script
 ├── package.json

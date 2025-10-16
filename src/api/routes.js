@@ -137,6 +137,83 @@ router.post('/logs/batch', async (req, res) => {
 });
 
 /**
+ * POST /api/ingest-csv
+ * Ingest CSV file directly (raw CSV text in body)
+ * Supports EVTX exports via evtx_dump → CSV
+ */
+router.post('/ingest-csv', async (req, res) => {
+  try {
+    // Handle different content types
+    let csvText;
+    if (typeof req.body === 'string') {
+      csvText = req.body;
+    } else if (req.body && req.body.csv) {
+      csvText = req.body.csv;
+    } else if (Buffer.isBuffer(req.body)) {
+      csvText = req.body.toString('utf-8');
+    } else {
+      return res.status(400).json({ error: 'CSV data required in request body as "csv" field or raw text' });
+    }
+
+    if (!csvText || typeof csvText !== 'string') {
+      return res.status(400).json({ error: 'CSV data required in request body as "csv" field or raw text' });
+    }
+
+    // Parse CSV from text
+    const { parse } = await import('csv-parse/sync');
+    const records = parse(csvText, {
+      columns: true,
+      skip_empty_lines: true,
+      trim: true,
+      bom: true,
+      relax_column_count: true // Handle inconsistent column counts
+    });
+
+    if (!records || records.length === 0) {
+      return res.status(400).json({ error: 'No valid records found in CSV' });
+    }
+
+    // Insert logs into database
+    const insertMany = db.transaction((entries) => {
+      for (const entry of entries) {
+        const normalized = normalizeLogEntry(entry);
+        insertLog.run(
+          normalized.timestamp,
+          normalized.event_type,
+          normalized.username,
+          normalized.source_ip,
+          normalized.destination_ip,
+          normalized.status,
+          normalized.message,
+          normalized.raw_data
+        );
+      }
+    });
+
+    insertMany(records);
+
+    // Run threat detection
+    const detectionResults = runAllDetections();
+
+    res.json({
+      success: true,
+      logs_ingested: records.length,
+      alerts_generated: detectionResults.total,
+      detection_summary: {
+        brute_force: detectionResults.brute_force.length,
+        off_hours: detectionResults.off_hours.length,
+        geo_anomaly: detectionResults.geo_anomaly.length
+      },
+      note: 'CSV ingested and analyzed. Supports EVTX exports via: evtx_dump -o csv yourfile.evtx'
+    });
+
+  } catch (error) {
+    console.error('Error ingesting CSV:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
  * GET /api/logs
  * Retrieve recent logs
  */

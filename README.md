@@ -9,6 +9,11 @@ A defensive security tool for analyzing security logs and detecting threats usin
   - Brute force attacks (failed login attempts)
   - Off-hours access detection
   - Geographic/IP anomaly detection
+  - High-risk IP detection via AbuseIPDB
+- **IP Reputation Enrichment**: Automatic IP reputation lookup with local caching
+  - AbuseIPDB integration for abuse confidence scores
+  - 7-day local cache to minimize API calls
+  - Stub data support for testing without API key
 - **AI Analysis**: Optional Claude-powered threat summarization
 - **RESTful API**: UI-ready endpoints for building dashboards
 - **SQLite Storage**: Zero-configuration local database
@@ -120,6 +125,14 @@ POST /api/detect         # Manually trigger detection on existing logs
 POST /api/analyze        # Generate AI summary of recent alerts
 ```
 
+### IP Reputation
+
+```bash
+GET  /api/ip/:ip/reputation          # Get IP reputation from AbuseIPDB
+GET  /api/ip/reputation/stats        # Get reputation cache statistics
+POST /api/ip/reputation/clear-cache  # Clear stale cache entries (>7 days)
+```
+
 ## Usage Examples
 
 ### Upload Sample Logs
@@ -165,6 +178,19 @@ curl http://localhost:3000/api/alerts?status=open
 
 ```bash
 curl -X POST http://localhost:3000/api/analyze
+```
+
+### Check IP Reputation
+
+```bash
+# Get reputation for a specific IP
+curl http://localhost:3000/api/ip/203.0.113.45/reputation
+
+# View reputation cache statistics
+curl http://localhost:3000/api/ip/reputation/stats
+
+# Clear stale cache entries
+curl -X POST http://localhost:3000/api/ip/reputation/clear-cache
 ```
 
 ### Run Full Test Suite
@@ -221,6 +247,15 @@ The parser normalizes various common field names:
 - Configurable blocklists
 - Can be extended with geo-IP databases
 
+### High-Risk IP Detection
+- Integrates with AbuseIPDB for IP reputation data
+- Threshold: Abuse confidence score >= 50%
+- Severity levels:
+  - Critical: Score >= 75%
+  - High: Score >= 50%
+- Local caching (7-day TTL) to minimize API usage
+- Works with stub data when no API key configured
+
 ## Project Structure
 
 ```
@@ -232,6 +267,8 @@ threat-detection-dashboard/
 │   ├── detection/
 │   │   ├── rules.js          # Detection engine
 │   │   └── aiAnalyst.js      # AI summarization
+│   ├── enrichment/
+│   │   └── abuseipdb.js      # IP reputation enrichment
 │   ├── api/
 │   │   └── routes.js         # API endpoints
 │   └── utils/

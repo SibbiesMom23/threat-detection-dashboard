@@ -7,6 +7,7 @@ import { parseJSON, parseCSV, normalizeLogEntry } from '../utils/parsers.js';
 import { insertLog, getAlerts, getRecentLogs, db } from '../database/init.js';
 import { runAllDetections } from '../detection/rules.js';
 import { generateAISummary, generateAlertSummary, summarizeAlerts } from '../detection/aiAnalyst.js';
+import { getIPReputationWithCache, clearStaleCache } from '../enrichment/abuseipdb.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -79,8 +80,8 @@ router.post('/logs/upload', upload.single('logfile'), async (req, res) => {
 
     insertMany(logs);
 
-    // Run threat detection
-    const detectionResults = runAllDetections();
+    // Run threat detection (async now due to IP enrichment)
+    const detectionResults = await runAllDetections();
 
     res.json({
       success: true,
@@ -89,7 +90,8 @@ router.post('/logs/upload', upload.single('logfile'), async (req, res) => {
       detection_summary: {
         brute_force: detectionResults.brute_force.length,
         off_hours: detectionResults.off_hours.length,
-        geo_anomaly: detectionResults.geo_anomaly.length
+        geo_anomaly: detectionResults.geo_anomaly.length,
+        high_risk_ip: detectionResults.high_risk_ip.length
       }
     });
 
@@ -192,8 +194,8 @@ router.post('/ingest-csv', async (req, res) => {
 
     insertMany(records);
 
-    // Run threat detection
-    const detectionResults = runAllDetections();
+    // Run threat detection (async now due to IP enrichment)
+    const detectionResults = await runAllDetections();
 
     res.json({
       success: true,
@@ -202,7 +204,8 @@ router.post('/ingest-csv', async (req, res) => {
       detection_summary: {
         brute_force: detectionResults.brute_force.length,
         off_hours: detectionResults.off_hours.length,
-        geo_anomaly: detectionResults.geo_anomaly.length
+        geo_anomaly: detectionResults.geo_anomaly.length,
+        high_risk_ip: detectionResults.high_risk_ip.length
       },
       note: 'CSV ingested and analyzed. Supports EVTX exports via: evtx_dump -o csv yourfile.evtx'
     });
@@ -264,7 +267,7 @@ router.get('/alerts', (req, res) => {
  */
 router.post('/detect', async (req, res) => {
   try {
-    const results = runAllDetections();
+    const results = await runAllDetections();
 
     res.json({
       success: true,
@@ -272,7 +275,8 @@ router.post('/detect', async (req, res) => {
       detection_summary: {
         brute_force: results.brute_force.length,
         off_hours: results.off_hours.length,
-        geo_anomaly: results.geo_anomaly.length
+        geo_anomaly: results.geo_anomaly.length,
+        high_risk_ip: results.high_risk_ip.length
       },
       details: results
     });
@@ -360,6 +364,93 @@ router.get('/stats', (req, res) => {
 
   } catch (error) {
     console.error('Error fetching stats:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * GET /api/ip/:ip/reputation
+ * Get IP reputation from AbuseIPDB (with caching)
+ */
+router.get('/ip/:ip/reputation', async (req, res) => {
+  try {
+    const ipAddress = req.params.ip;
+
+    // Basic IP validation
+    const ipRegex = /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/;
+    if (!ipRegex.test(ipAddress)) {
+      return res.status(400).json({ error: 'Invalid IP address format' });
+    }
+
+    const reputation = await getIPReputationWithCache(ipAddress);
+
+    if (!reputation) {
+      return res.status(404).json({ error: 'Could not fetch IP reputation' });
+    }
+
+    res.json({
+      success: true,
+      ip_address: ipAddress,
+      reputation: {
+        abuse_confidence_score: reputation.abuse_confidence_score,
+        country_code: reputation.country_code,
+        usage_type: reputation.usage_type,
+        is_whitelisted: reputation.is_whitelisted,
+        total_reports: reputation.total_reports,
+        last_checked: reputation.last_checked,
+        risk_level: reputation.abuse_confidence_score >= 75 ? 'critical' :
+                    reputation.abuse_confidence_score >= 50 ? 'high' :
+                    reputation.abuse_confidence_score >= 25 ? 'medium' : 'low'
+      }
+    });
+
+  } catch (error) {
+    console.error('Error fetching IP reputation:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * POST /api/ip/reputation/clear-cache
+ * Clear stale IP reputation cache entries
+ */
+router.post('/ip/reputation/clear-cache', (req, res) => {
+  try {
+    const cleared = clearStaleCache();
+
+    res.json({
+      success: true,
+      entries_cleared: cleared,
+      message: `Cleared ${cleared} stale cache entries`
+    });
+
+  } catch (error) {
+    console.error('Error clearing cache:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * GET /api/ip/reputation/stats
+ * Get IP reputation cache statistics
+ */
+router.get('/ip/reputation/stats', (req, res) => {
+  try {
+    const stats = {
+      total_cached: db.prepare('SELECT COUNT(*) as count FROM ip_reputation').get().count,
+      high_risk_count: db.prepare('SELECT COUNT(*) as count FROM ip_reputation WHERE abuse_confidence_score >= 50').get().count,
+      critical_risk_count: db.prepare('SELECT COUNT(*) as count FROM ip_reputation WHERE abuse_confidence_score >= 75').get().count,
+      whitelisted_count: db.prepare('SELECT COUNT(*) as count FROM ip_reputation WHERE is_whitelisted = 1').get().count,
+      recent_checks: db.prepare('SELECT ip_address, abuse_confidence_score, country_code, last_checked FROM ip_reputation ORDER BY last_checked DESC LIMIT 10').all()
+    };
+
+    res.json({
+      success: true,
+      stats
+    });
+
+  } catch (error) {
+    console.error('Error fetching IP reputation stats:', error);
     res.status(500).json({ error: error.message });
   }
 });

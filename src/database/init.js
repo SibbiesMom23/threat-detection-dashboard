@@ -47,6 +47,21 @@ db.exec(`
 `);
 
 db.exec(`
+  CREATE TABLE IF NOT EXISTS ip_reputation (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    ip_address TEXT NOT NULL UNIQUE,
+    abuse_confidence_score INTEGER DEFAULT 0,
+    country_code TEXT,
+    usage_type TEXT,
+    is_whitelisted INTEGER DEFAULT 0,
+    total_reports INTEGER DEFAULT 0,
+    last_checked TEXT NOT NULL,
+    raw_data TEXT,
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP
+  )
+`);
+
+db.exec(`
   CREATE INDEX IF NOT EXISTS idx_logs_timestamp ON logs(timestamp);
   CREATE INDEX IF NOT EXISTS idx_logs_source_ip ON logs(source_ip);
   CREATE INDEX IF NOT EXISTS idx_logs_username ON logs(username);
@@ -54,6 +69,8 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS idx_alerts_severity ON alerts(severity);
   CREATE INDEX IF NOT EXISTS idx_alerts_status ON alerts(status);
   CREATE INDEX IF NOT EXISTS idx_alerts_created_at ON alerts(created_at);
+  CREATE INDEX IF NOT EXISTS idx_ip_reputation_ip ON ip_reputation(ip_address);
+  CREATE INDEX IF NOT EXISTS idx_ip_reputation_score ON ip_reputation(abuse_confidence_score);
 `);
 
 export function initializeDatabase() {
